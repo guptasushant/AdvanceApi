@@ -1,9 +1,13 @@
 package com.advance.api.serviceimpl;
 
 import java.util.ArrayList;
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.advance.api.apiexception.ApiException;
@@ -17,6 +21,8 @@ public class ApiServiceImpl implements ApiService {
 
 	@Autowired
 	private ApiRepository apiRepository;
+	
+
 
 	public ApiDto insert(ApiDto dto) {
 		ApiEntity entity = this.apiEntity(dto);
@@ -43,6 +49,7 @@ public class ApiServiceImpl implements ApiService {
 		return apidto;
 	}
 
+	@Cacheable(cacheNames = "api",key = "#id")
 	public ApiDto getData(int id) {
 		ApiEntity orElseThrow = this.apiRepository.findById(id).orElseThrow(() -> new ApiException("id not found !"));
 		ApiDto apiDto = this.apiDto(orElseThrow);
@@ -59,6 +66,7 @@ public class ApiServiceImpl implements ApiService {
 		return list;
 	}
 
+	@CachePut(cacheNames = "api",key = "#id")
 	// Updating the existing data based on the provided ID
 	public ApiDto updateData(ApiDto dto, int id) {
 		// Fetch the existing entity from the database using the provided ID
@@ -78,6 +86,7 @@ public class ApiServiceImpl implements ApiService {
 		return updatedDto;
 	}
 	
+	@CacheEvict(cacheNames = "api",key = "#id")
 	  public ApiDto deleteData(int id) {
 	        ApiEntity existingEntity = this.apiRepository.findById(id)
 	            .orElseThrow(() -> new ApiException("Entity with id " + id + " not found!"));
