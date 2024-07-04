@@ -23,6 +23,7 @@ public class ApiController {
 	@Autowired
 	private ApiService apiService;
 
+	
 	@PostMapping("/insert")
 	public ResponseEntity<ApiDto> Insert(@Valid @RequestBody ApiDto apiDto) {
 		ApiDto insert = this.apiService.insert(apiDto);
